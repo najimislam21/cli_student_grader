@@ -53,7 +53,6 @@ void addStudent(List<Map<String, dynamic>> students) {
     "bonus": null,
     "comment": null,
   };
-
   students.add(student);
 
   print("Student '$name' added successfully!");
