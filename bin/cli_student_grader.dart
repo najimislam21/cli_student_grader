@@ -36,7 +36,6 @@ var choice = stdin.readLineSync();
     }
   } while (running);
 }
-
 //3. Add Student Function
 void addStudent(List<Map<String, dynamic>> students) {
   stdout.write("Enter student name: ");
@@ -60,4 +59,6 @@ void addStudent(List<Map<String, dynamic>> students) {
   print("Student '$name' added successfully!");
  
 }
+
+
 
