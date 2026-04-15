@@ -38,6 +38,9 @@
          viewStudents(students);
           break;
         case "6":
+         reportCard(students);
+          break;
+        case "7":
           running = false;
           print("Exiting...");
           break;
@@ -127,6 +130,72 @@ void viewStudents(List<Map<String, dynamic>> students){
     ];
     print(tags.join("|"));
   }
+}
+// 8. View Report Card
+void reportCard(List<Map<String, dynamic>> students) {
+  stdout.write("Select student index: ");
+  int i = int.parse(stdin.readLineSync()!);
+
+  if (i < 0 || i >= students.length) {
+    print("Invalid index!");
+    return;
+  }
+
+  var s = students[i];
+  List<int> scores = List<int>.from(s["scores"]);
+
+  if (scores.isEmpty) {
+    print("No scores available!");
+    return;
+  }
+
+  int sum = 0;
+  for (var sc in scores) {
+    sum += sc;
+  }
+
+  double avg = sum / scores.length;
+  double finalAvg = avg + (s["bonus"] ?? 0);
+  if (finalAvg > 100) finalAvg = 100;
+
+  String grade;
+  if (finalAvg >= 90) {
+    grade = "A";
+  } else if (finalAvg >= 80) {
+    grade = "B";
+  } else if (finalAvg >= 70) {
+    grade = "C";
+  } else if (finalAvg >= 60) {
+    grade = "D";
+  } else {
+    grade = "F";
+  }
+
+  String feedback = switch (grade) {
+    "A" => "Outstanding!",
+    "B" => "Good work!",
+    "C" => "Improve more",
+    "D" => "Needs work",
+    "F" => "Failing",
+    _ => "Unknown"
+  };
+
+  String comment =
+      s["comment"]?.toUpperCase() ?? "No comment provided";
+
+  print("""
+╔══════════════════════════════╗
+║       REPORT CARD            ║
+╠══════════════════════════════╝
+║ Name: ${s["name"]}
+║ Scores: $scores
+║ Bonus: ${s["bonus"] != null ? "+${s["bonus"]}" : "None"}
+║ Average: ${finalAvg.toStringAsFixed(2)}
+║ Grade: $grade
+║ Comment: $comment
+║ Feedback: $feedback
+╚══════════════════════════════╝
+""");
 }
 
 
