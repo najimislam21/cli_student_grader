@@ -29,6 +29,9 @@
           recordScore(students);
           break;
         case "3":
+          addBonus(students);
+          break;
+        case "4":
           running = false;
           print("Exiting...");
           break;
@@ -85,5 +88,20 @@
 
     print("Score added successfully!");
   }
-  
+  // 5. Bonus
+void addBonus(List<Map<String, dynamic>> students) {
+  stdout.write("Select student index: ");
+  int i = int.parse(stdin.readLineSync()!);
+
+  stdout.write("Enter bonus (1-10): ");
+  int bonus = int.parse(stdin.readLineSync()!);
+
+  if (students[i]["bonus"] == null) {
+    students[i]["bonus"] ??= bonus;
+    print("Bonus added!");
+  } else {
+    print("Bonus already exists!");
+  }
+}
+
 
