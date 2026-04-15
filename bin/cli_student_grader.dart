@@ -32,6 +32,9 @@
           addBonus(students);
           break;
         case "4":
+          addComment(students);
+          break;
+        case "5":
           running = false;
           print("Exiting...");
           break;
@@ -103,5 +106,14 @@ void addBonus(List<Map<String, dynamic>> students) {
     print("Bonus already exists!");
   }
 }
+// 6. Comment
+void addComment(List<Map<String, dynamic>> students) {
+  stdout.write("Select student index: ");
+  int i = int.parse(stdin.readLineSync()!);
+
+  stdout.write("Enter comment: ");
+  students[i]["comment"] = stdin.readLineSync();
+}
+
 
 
