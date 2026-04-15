@@ -35,6 +35,9 @@
           addComment(students);
           break;
         case "5":
+         viewStudents(students);
+          break;
+        case "6":
           running = false;
           print("Exiting...");
           break;
@@ -113,6 +116,17 @@ void addComment(List<Map<String, dynamic>> students) {
 
   stdout.write("Enter comment: ");
   students[i]["comment"] = stdin.readLineSync();
+}
+// 7. View Student
+void viewStudents(List<Map<String, dynamic>> students){
+  for(var s in students){
+    var tags =[
+      s["name"],
+      "${s["score"].length} score",
+      if(s["bonus"]!= null)"Bonus"
+    ];
+    print(tags.join("|"));
+  }
 }
 
 
