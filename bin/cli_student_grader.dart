@@ -1,103 +1,124 @@
-  import 'dart:io';
+import 'dart:io';
 
-  // App Setup
-  const String appTitle = "Student Grader v1.0";
-  final Set<String> availableSubjects = {"Math", "English", "Science", "ICT"};
+// App Setup
+const String appTitle = "Student Grader v1.0";
+final Set<String> availableSubjects = {"Math", "English", "Science", "ICT"};
 
-  // Add Student
-  void main() {
-    var students = <Map<String, dynamic>>[];
-    var running = true;
+// Add Student
+void main() {
+  var students = <Map<String, dynamic>>[];
+  var running = true;
 
-    do {
-      print("""
-  ===== $appTitle =====
+  do {
+    print("""
+===== $appTitle =====
 
-  1. Add Student
+1. Add Student
+2. Record Score
+3. Add Bonus Points
+4. Add Comment
+5. View All Students
+6. View Report Card
+7. Class Summary
+8. Exit
 
+Choose an option:
+""");
 
-  Choose an option:
-  """);
+    var choice = stdin.readLineSync();
 
-  var choice = stdin.readLineSync();
+    switch (choice) {
+      case "1":
+        addStudent(students);
+        break;
+      case "2":
+        recordScore(students);
+        break;
+      case "3":
+        addBonus(students);
+        break;
+      case "4":
+        addComment(students);
+        break;
+      case "5":
+        viewStudents(students);
+        break;
+      case "6":
+        reportCard(students);
+        break;
+      case "7":
+        classSummary(students);
+        break;
+      case "8":
+        running = false;
+        print("Exiting...");
+        break;
+      default:
+        print("Invalid option");
+    }
+  } while (running);
+}
 
-      switch (choice) {
-        case "1":
-          addStudent(students);
-          break;
-        case "2":
-          recordScore(students);
-          break;
-        case "3":
-          addBonus(students);
-          break;
-        case "4":
-          addComment(students);
-          break;
-        case "5":
-         viewStudents(students);
-          break;
-        case "6":
-         reportCard(students);
-          break;
-        case "7":
-          running = false;
-          print("Exiting...");
-          break;
-        default:
-          print("Invalid option");
-      }
-    } while (running);
+//3. Add Student Function
+void addStudent(List<Map<String, dynamic>> students) {
+  stdout.write("Enter student name: ");
+  String? name = stdin.readLineSync();
+
+  if (name == null || name.isEmpty) {
+    print("Name cannot be empty!");
+    return;
   }
-  //3. Add Student Function
-  void addStudent(List<Map<String, dynamic>> students) {
-    stdout.write("Enter student name: ");
-    String? name = stdin.readLineSync();
 
-    if (name == null || name.isEmpty) {
-      print("Name cannot be empty!");
-      return;
-    }
+  var student = {
+    "name": name,
+    "scores": <int>[],
+    "subjects": {...availableSubjects},
+    "bonus": null,
+    "comment": null,
+  };
+  students.add(student);
 
-    var student = {
-      "name": name,
-      "scores": <int>[],
-      "subjects": {...availableSubjects},
-      "bonus": null,
-      "comment": null,
-    };
-    students.add(student);
+  print("Student '$name' added successfully!");
+}
 
-    print("Student '$name' added successfully!");
-  
+// 2. Record Score
+void recordScore(List<Map<String, dynamic>> students) {
+  if (students.isEmpty) {
+    print("No students available!");
+    return;
   }
-  // 2. Record Score
-  void recordScore(List<Map<String, dynamic>> students) {
-    if (students.isEmpty) {
-      print("No students available!");
-      return;
-    }
 
-    for (int i = 0; i < students.length; i++) {
-      print("$i. ${students[i]["name"]}");
-    }
-
-    stdout.write("Select student index: ");
-    int index = int.parse(stdin.readLineSync()!);
-
-    stdout.write("Enter score (0-100): ");
-    int score = int.parse(stdin.readLineSync()!);
-
-    while (score < 0 || score > 100) {
-      stdout.write("Invalid! Enter again: ");
-      score = int.parse(stdin.readLineSync()!);
-    }
-
-    (students[index]["scores"] as List<int>).add(score);
-
-    print("Score added successfully!");
+  for (int i = 0; i < students.length; i++) {
+    print("$i. ${students[i]["name"]}");
   }
-  // 5. Bonus
+
+  stdout.write("Select student index: ");
+  int index = int.parse(stdin.readLineSync()!);
+
+  if (index < 0 || index >= students.length) {
+    print("Invalid index!");
+    return;
+  }
+
+  print("Available subjects:");
+  for (var sub in students[index]["subjects"]) {
+    print("- $sub");
+  }
+
+  stdout.write("Enter score (0-100): ");
+  int score = int.parse(stdin.readLineSync()!);
+
+  while (score < 0 || score > 100) {
+    stdout.write("Invalid! Enter again: ");
+    score = int.parse(stdin.readLineSync()!);
+  }
+
+  (students[index]["scores"] as List<int>).add(score);
+
+  print("Score added successfully!");
+}
+
+// 5. Bonus
 void addBonus(List<Map<String, dynamic>> students) {
   stdout.write("Select student index: ");
   int i = int.parse(stdin.readLineSync()!);
@@ -112,6 +133,7 @@ void addBonus(List<Map<String, dynamic>> students) {
     print("Bonus already exists!");
   }
 }
+
 // 6. Comment
 void addComment(List<Map<String, dynamic>> students) {
   stdout.write("Select student index: ");
@@ -120,17 +142,25 @@ void addComment(List<Map<String, dynamic>> students) {
   stdout.write("Enter comment: ");
   students[i]["comment"] = stdin.readLineSync();
 }
+
 // 7. View Student
-void viewStudents(List<Map<String, dynamic>> students){
-  for(var s in students){
-    var tags =[
+void viewStudents(List<Map<String, dynamic>> students) {
+  if (students.isEmpty) {
+    print("No students found!");
+    return;
+  }
+
+  for (var s in students) {
+    var tags = [
       s["name"],
-      "${s["score"].length} score",
-      if(s["bonus"]!= null)"Bonus"
+      "${(s["scores"] as List).length} scores",
+      if (s["bonus"] != null) "Bonus",
     ];
-    print(tags.join("|"));
+
+    print(tags.join(" | "));
   }
 }
+
 // 8. View Report Card
 void reportCard(List<Map<String, dynamic>> students) {
   stdout.write("Select student index: ");
@@ -177,11 +207,10 @@ void reportCard(List<Map<String, dynamic>> students) {
     "C" => "Improve more",
     "D" => "Needs work",
     "F" => "Failing",
-    _ => "Unknown"
+    _ => "Unknown",
   };
 
-  String comment =
-      s["comment"]?.toUpperCase() ?? "No comment provided";
+  String comment = s["comment"]?.toUpperCase() ?? "No comment provided";
 
   print("""
 ╔══════════════════════════════╗
@@ -198,5 +227,74 @@ void reportCard(List<Map<String, dynamic>> students) {
 """);
 }
 
+//  9. Class Summary
+void classSummary(List<Map<String, dynamic>> students) {
+  if (students.isEmpty) {
+    print("No students available");
+    return;
+  }
 
+  double total = 0;
+  int count = 0;
+  double highest = 0;
+  double lowest = double.infinity;
 
+  var grades = <String>{};
+  int passCount = 0;
+
+  for (var s in students) {
+    List<int> scores = List<int>.from(s["scores"]);
+
+    if (scores.isEmpty) continue;
+
+    int sum = scores.reduce((a, b) => a + b);
+    double avg = sum / scores.length;
+    avg += (s["bonus"] ?? 0);
+
+    if (avg > 100) avg = 100;
+
+    total += avg;
+    count++;
+
+    if (avg > highest) highest = avg;
+    if (avg < lowest) lowest = avg;
+
+    if (scores.isNotEmpty && avg >= 60) {
+      passCount++;
+    }
+
+    if (avg >= 90)
+      grades.add("A");
+    else if (avg >= 80)
+      grades.add("B");
+    else if (avg >= 70)
+      grades.add("C");
+    else if (avg >= 60)
+      grades.add("D");
+    else
+      grades.add("F");
+  }
+
+  if (count == 0) {
+    print("No valid scores found");
+    return;
+  }
+
+  var summaryLines = [
+    for (var s in students)
+      "${s["name"]}: ${(s["scores"] as List).length} scores",
+  ];
+
+  print("\nStudent Summary:");
+  for (var line in summaryLines) {
+    print(line);
+  }
+
+  print("Total Students: ${students.length}");
+  print("Students with scores: $count");
+  print("Class Average: ${total / count}");
+  print("Highest: $highest");
+  print("Lowest: $lowest");
+  print("Pass Count: $passCount");
+  print("Grades: $grades");
+}
